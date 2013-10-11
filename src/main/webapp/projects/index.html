@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+<title>Projects</title>
+</head>
+<body class="lift:content_id=main">
+	<div id="main" class="lift:surround?with=default;at=content">
+		<div class="container">
+			<h2>Projects</h2>
+			<ul>
+				<lift:Menu.group group="projects">
+					<li><menu:bind /></li>
+				</lift:Menu.group>
+			</ul>
+			<div class="lift:projectMain.getProjects">
+				<table id="projects_table">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Created</th>
+							<th>Modified</th>
+							<th colspan="3">Actions</th>
+						</tr>
+					</thead>
+					<tbody id="projects_body">
+						<tr id="lines">
+							<td id="name">An item</td>
+							<td id="created">An item</td>
+							<td id="updated">An item</td>
+							<td id="edit">An item</td>
+							<td id="update">An item</td>
+							<td id="delete">An item</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
