@@ -49,6 +49,13 @@ class User private () extends Record[User] with MyPassword[User] with KeyedRecor
       from(MySchema.projects)((p) => where (p.userId === idField) select (p) orderBy(p.updated)).toList
   }
   
+  def getProject(projId:Long):Box[Project] = {
+    val query = from(MySchema.projects)((p) => where (p.id === projId) select (p))
+    val result = if (query.isEmpty) Empty else Full(query.single)
+    // Return Project
+    result
+  }
+  
 }
 
 /**

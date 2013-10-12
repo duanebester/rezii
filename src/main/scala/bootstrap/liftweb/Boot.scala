@@ -63,6 +63,7 @@ class Boot {
     val home = Loc("Home", "home" :: Nil, "Home",loggedIn, LocGroup("main"))
     val projects = Loc("Projects", "projects" :: "index" :: Nil, "Projects", loggedIn, LocGroup("main"))
     val project_add = Loc("AddProject", "projects" :: "add" :: Nil, "Add Project",loggedIn, LocGroup("projects"))
+    val _project_edit = Loc("EditProject", "projects" :: "edit" :: Nil, "Edit Project",Hidden)
 
     // Build SiteMap
     def sitemap = SiteMap(
@@ -72,6 +73,7 @@ class Boot {
       Menu(home),
       Menu(projects),
       Menu(project_add),
+      Menu(_project_edit),
       //Menu(settings),
 
       // more complex because this menu allows anything in the

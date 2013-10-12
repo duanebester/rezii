@@ -12,6 +12,8 @@ import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.provider.HTTPCookie
 import code.model._
 
+object projectVar extends RequestVar[Project](null)
+
 class ProjectMain extends Loggable {
 
   private var name: String = ""
@@ -29,8 +31,7 @@ class ProjectMain extends Loggable {
           "#updated *" #> value.updated.defaultValue.getTime().toString() &
           "#created *" #> value.created.defaultValue.getTime().toString() &
           "#name *" #> value.name &
-          "#edit *" #> <a href="#">Edit</a> &
-          "#update *" #> <a href="#">Update</a> &
+          "#edit *" #> SHtml.link("/projects/edit", () => projectVar(value), Text("Edit")) &
           "#delete *" #> <a class="delete" href="#">Delete</a>
         })
       }
@@ -56,8 +57,8 @@ class ProjectMain extends Loggable {
 
     for { user <- User.currentUser ?~ "User does not exist" } {
       val newProject = Project.createRecord.
-        name(name).
-        description(description);
+        name(name.trim()).
+        description(description.trim());
 
       newProject.validate match {
         case Nil => {
@@ -69,8 +70,34 @@ class ProjectMain extends Loggable {
           S.error(xs);
         }
       }
-
     }
+  }
+  
+  def editProject = {
+    
+    val proj = projectVar.is
+    
+    "#name" #> JsCmds.FocusOnLoad(SHtml.text(proj.name.is, proj.name(_))) &
+    "#description" #> SHtml.text(proj.description.is, proj.description(_)) &
+    "type=submit" #> SHtml.ajaxSubmit("Save", processSave) andThen SHtml.makeFormsAjax
+  }
+  
+  def processSave(): JsCmd = {
 
+    for { user <- User.currentUser ?~ "User does not exist" } {
+      
+      val project = projectVar.is
+      //project.name(name.trim()).description(description.trim())
+      
+      project.validate match {
+        case Nil => {
+          MySchema.projects.update(project)
+          S.redirectTo("/projects/")
+          S.notice("Project successfully updated.")
+          //TODO: Add change tracking?
+        }
+        case xs => S.error(xs)
+      }
+    }
   }
 }
