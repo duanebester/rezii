@@ -222,14 +222,22 @@ form {
 	color: #fff;
 	width: 950px;
 	margin: 0 auto;
+	float: none;
 }
 #lift__noticesContainer__ li {
-	margin-top: 20px;
+	margin: 20px auto;
 	font-weight: bold;
+	text-align: center;
+	float: none;
 }
 #lift__noticesContainer___error {
 	height: 60px;
 	background-color: rgb(220, 0, 0);
+	border-top: 10px solid #fff
+}
+#lift__noticesContainer___notice {
+	height: 60px;
+	background-color: rgb(30, 190, 30);
 	border-top: 10px solid #fff
 }
 

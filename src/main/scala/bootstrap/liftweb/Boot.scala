@@ -116,6 +116,9 @@ class Boot {
     LiftRules.htmlProperties.default.set((r: Req) =>
       new Html5Properties(r.userAgent))    
       
+    // Auto fade notices: After 1 second, fade for 2 seconds duration
+    LiftRules.noticesAutoFadeOut.default.set((noticeType: NoticeType.Value) => Full((1 seconds, 2 seconds)))
+      
     // Allow resources
     ResourceServer.allow {
       case "css" :: "main.css" :: Nil => true

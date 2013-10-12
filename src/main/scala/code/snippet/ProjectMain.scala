@@ -1,6 +1,6 @@
 package code.snippet
 
-import scala.xml.{ NodeSeq, Text }
+import scala.xml.{ NodeSeq, Text, Attribute }
 import net.liftweb.util._
 import net.liftweb.common._
 import java.util.Date
@@ -32,7 +32,15 @@ class ProjectMain extends Loggable {
           "#created *" #> value.created.defaultValue.getTime().toString() &
           "#name *" #> value.name &
           "#edit *" #> SHtml.link("/projects/edit", () => projectVar(value), Text("Edit")) &
-          "#delete *" #> SHtml.ajaxSubmit("Delete", processDelete) //andThen SHtml.makeFormsAjax
+          "#delete *" #> SHtml.a( () => {
+								  JsCmds.Confirm("Are you sure you want to delete?", {
+								    SHtml.ajaxInvoke(() => {
+								      //Logic here to delete
+								      deleteProject(value.id)
+								      JsCmds.After(3 seconds, JsCmds.Reload)
+								    })._2
+								  })
+								}, Text("Delete"), "class" -> "delete")
         })
       }
       case _ => {
@@ -63,8 +71,8 @@ class ProjectMain extends Loggable {
       newProject.validate match {
         case Nil => {
           user.projects.associate(newProject)
-          S.redirectTo(whence)
-          S.notice("Project successfully added.")
+          
+          S.redirectTo("/projects/", () => S.notice("Project successfully added"))
         }
         case xs => {
           S.error(xs);
@@ -92,8 +100,8 @@ class ProjectMain extends Loggable {
       project.validate match {
         case Nil => {
           MySchema.projects.update(project)
-          S.redirectTo("/projects/")
-          S.notice("Project successfully updated.")
+          
+          S.redirectTo("/projects/", () => S.notice("Project successfully updated"))
           //TODO: Add change tracking?
         }
         case xs => S.error(xs)
@@ -101,14 +109,16 @@ class ProjectMain extends Loggable {
     }
   }
   
-  def processDelete(): JsCmd = {
-    logger.info("processDelete")
+  def deleteProject(projId:Long) = {
     for { user <- User.currentUser ?~ "User does not exist" } {
-      
-      val project = projectVar.is
-      val returnVal = user.deleteProject(project.id)
-      logger.info("Deleted? : "+returnVal)
-      S.redirectTo("/projects/")
-    }
+
+      val returnVal = user.deleteProject(projId)
+      logger.info("Deleted Project (Id:"+projId+"): "+returnVal)
+      if(returnVal == 1)
+        S.notice("Project Deleted.")
+      else
+        S.error("Could not delete!")
+    } 
   }
+  
 }
