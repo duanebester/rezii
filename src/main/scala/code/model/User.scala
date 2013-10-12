@@ -56,6 +56,13 @@ class User private () extends Record[User] with MyPassword[User] with KeyedRecor
     result
   }
   
+  def deleteProject(projId:Long):Int = {
+    val query = from(MySchema.projects)((p) => where (p.id === projId) select (p))
+    //val result = if (query.isEmpty) Empty else Full(query.single)
+    // Return Project
+    MySchema.projects.delete(query)
+  }
+  
 }
 
 /**

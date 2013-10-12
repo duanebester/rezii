@@ -32,7 +32,7 @@ class ProjectMain extends Loggable {
           "#created *" #> value.created.defaultValue.getTime().toString() &
           "#name *" #> value.name &
           "#edit *" #> SHtml.link("/projects/edit", () => projectVar(value), Text("Edit")) &
-          "#delete *" #> <a class="delete" href="#">Delete</a>
+          "#delete *" #> SHtml.ajaxSubmit("Delete", processDelete) //andThen SHtml.makeFormsAjax
         })
       }
       case _ => {
@@ -98,6 +98,17 @@ class ProjectMain extends Loggable {
         }
         case xs => S.error(xs)
       }
+    }
+  }
+  
+  def processDelete(): JsCmd = {
+    logger.info("processDelete")
+    for { user <- User.currentUser ?~ "User does not exist" } {
+      
+      val project = projectVar.is
+      val returnVal = user.deleteProject(project.id)
+      logger.info("Deleted? : "+returnVal)
+      S.redirectTo("/projects/")
     }
   }
 }
